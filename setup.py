@@ -40,10 +40,13 @@ if sys.implementation.name != 'cpython':
         )
     sys.exit(msg)
 
+
+EXTRA_COMPILE_ARGS: "list[str]" = []
+
 if 'HPY_DEBUG_BUILD' in os.environ:
     # -fkeep-inline-functions is needed to make sure that the stubs for HPy_*
     # functions are available to call inside GDB
-    EXTRA_COMPILE_ARGS = [
+    EXTRA_COMPILE_ARGS.extend([
         '-g', '-O0', '-UNDEBUG',
         '-fkeep-inline-functions',
         #
@@ -51,9 +54,7 @@ if 'HPY_DEBUG_BUILD' in os.environ:
         ## platforms/compilers. Uncomment temporarily if you need them.
         #'-Wfatal-errors',    # stop after one error (unrelated to warnings)
         #'-Werror',           # turn warnings into errors
-    ]
-else:
-    EXTRA_COMPILE_ARGS = []
+    ])
 
 if '_HPY_DEBUG_FORCE_DEFAULT_MEM_PROTECT' not in os.environ:
     EXTRA_COMPILE_ARGS.append('-D_HPY_DEBUG_MEM_PROTECT_USEMMAP')

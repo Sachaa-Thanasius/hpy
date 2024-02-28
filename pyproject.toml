@@ -87,6 +87,7 @@ extend-ignore = [
     "ANN101",  # Typing of Self for self is implicit.
     "ANN102",  # Typing of type[Self] for cls is implicit.
     "ANN204",  # Special method return types are known or implicit.
+    "ERA001",  # Leave commented-out code alone.
     # Recommended by ruff when using ruff format.
     "E111",
     "E114",

@@ -56,15 +56,15 @@ else:
     EXTRA_COMPILE_ARGS = []
 
 if '_HPY_DEBUG_FORCE_DEFAULT_MEM_PROTECT' not in os.environ:
-    EXTRA_COMPILE_ARGS += ['-D_HPY_DEBUG_MEM_PROTECT_USEMMAP']
+    EXTRA_COMPILE_ARGS.append('-D_HPY_DEBUG_MEM_PROTECT_USEMMAP')
 
 if platform.system() == "Windows":
-    EXTRA_COMPILE_ARGS += ['/WX']
+    EXTRA_COMPILE_ARGS.append('/WX')
 else:
-    EXTRA_COMPILE_ARGS += ['-Werror']
+    EXTRA_COMPILE_ARGS.append('-Werror')
 
 
-def get_scm_config():
+def get_scm_config() -> "dict[str, str]":
     """
     We use this function as a hook to generate version.h before building.
     """
@@ -163,7 +163,7 @@ class build_clib_hpy(build_clib):
         # etc) link to these libs.
         return None
 
-    def build_libraries(self, libraries):
+    def build_libraries(self, libraries: "list[tuple[str, dict[str, str]]]") -> None:
         # we just inherit the 'inplace' option from 'build_ext'
         build_ext = self.get_finalized_command('build_ext')
         inplace = build_ext.inplace

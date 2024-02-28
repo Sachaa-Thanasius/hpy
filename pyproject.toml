@@ -32,7 +32,14 @@ include-package-data = true
 
 [tool.ruff]
 include = ["hpy"]
-extend-exclude = ["docs", "test", "proof-of-concept", "microbench"]
+extend-exclude = [
+    "docs",
+    "test",
+    "proof-of-concept",
+    "microbench",
+    "hpy/devel",
+    "hpy/debug",
+]
 line-length = 80
 target-version = "py38"
 
@@ -110,7 +117,8 @@ ignore = ["docs", "test", "proof-of-concept", "microbench"]
 pythonVersion = "3.8"
 typeCheckingMode = "strict"
 
-reportMissingTypeStubs = "warning"
+reportTypeCommentUsage = "none"                # Needed for python 2.7 compatibility in hpy/devel/*.py
+reportMissingTypeStubs = "warning"             # setuptools_scm isn't fully type-annotated.
 reportPrivateUsage = "warning"
 reportCallInDefaultInitializer = "warning"
 reportUnnecessaryTypeIgnoreComment = "warning"

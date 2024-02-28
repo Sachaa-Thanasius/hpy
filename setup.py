@@ -168,14 +168,13 @@ class build_clib_hpy(build_clib):
         build_ext = self.get_finalized_command('build_ext')
         inplace = build_ext.inplace
 
-        import os.path
         if inplace:
             # the inplace option requires to find the package directory
             # using the build_py command for that
             build_py = self.get_finalized_command('build_py')
-            lib_dir = os.path.abspath(build_py.get_package_dir('hpy.devel'))
+            lib_dir = pathlib.Path(build_py.get_package_dir('hpy.devel')).resolve()
         else:
-            lib_dir = os.path.join(build_ext.build_lib, 'hpy', 'devel')
+            lib_dir = pathlib.Path(build_ext.build_lib, 'hpy', 'devel')
 
         for lib in libraries:
             lib_name, build_info = lib
@@ -184,8 +183,8 @@ class build_clib_hpy(build_clib):
             # such that we can temporarily change the 'build_temp'.
             orig_build_temp = self.build_temp
             orig_build_clib = self.build_clib
-            self.build_temp = os.path.join(orig_build_temp, 'lib', abi)
-            self.build_clib = os.path.join(lib_dir, 'lib', abi)
+            self.build_temp = str(pathlib.Path(orig_build_temp, 'lib', abi))
+            self.build_clib = str(lib_dir.joinpath('lib', abi))
             # ensure that 'build_clib' directory exists
             pathlib.Path(self.build_clib).mkdir(parents=True, exist_ok=True)
             try:

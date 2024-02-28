@@ -49,12 +49,14 @@ class HPyDevel:
     _DEFAULT_BASE_DIR = Path(__file__).parent
 
     def __init__(self, base_dir=_DEFAULT_BASE_DIR):
+        # type: (str | Path) -> None
         self.base_dir = Path(base_dir)
         self.include_dir = self.base_dir.joinpath('include')
         self.src_dir = self.base_dir.joinpath('src', 'runtime')
         self._available_static_libs = None
 
     def get_extra_include_dirs(self):
+        # type: () -> list[str]
         """ Extra include directories needed by extensions in both CPython and
             Universal modes.
         """
@@ -63,9 +65,11 @@ class HPyDevel:
         ]))
 
     def get_include_dir_forbid_python_h(self):
+        # type: () -> Path
         return self.include_dir.joinpath('hpy', 'forbid_python_h')
 
     def get_extra_sources(self):
+        # type: () -> list[str]
         """ Extra sources needed by extensions in both CPython and Universal
             modes.
         """
@@ -78,12 +82,13 @@ class HPyDevel:
         ]))
 
     def _scan_static_lib_dir(self):
+        # type: () -> dict[str, list[str]]
         """ Scan the static library directory and build a dict for all
             available static libraries. The library directory contains
             subdirectories for each ABI and the ABI folders then contain
             the static libraries.
         """
-        available_libs = {}
+        available_libs = {}  # type: dict[str, list[str]]
         lib_dir = self.base_dir.joinpath('lib')
         if lib_dir.exists():
             for abi_dir in lib_dir.iterdir():
@@ -96,6 +101,7 @@ class HPyDevel:
         return available_libs
 
     def get_static_libs(self, hpy_abi):
+        # type: (str) -> list[str] | None
         """ The list of necessary static libraries an HPy extension needs to
             link to or 'None' (if not available). The HPy ext needs to link to
             all static libraries in the list otherwise some function may stay
@@ -109,11 +115,13 @@ class HPyDevel:
         return self._available_static_libs.get(hpy_abi, None)
 
     def get_ctx_sources(self):
+        # type: () -> list[str]
         """ Extra sources needed only in the CPython ABI mode.
         """
         return list(map(str, self.src_dir.glob('ctx_*.c')))
 
     def fix_distribution(self, dist):
+        # type: (setuptools.Distribution) -> None
         """ Override build_ext to support hpy modules.
 
             Used from both setup.py and hpy/test.
@@ -123,6 +131,7 @@ class HPyDevel:
 
         @monkeypatch(dist.__class__)
         def has_ext_modules(self):
+            # type: (setuptools.Distribution) -> bool
             if self.ext_modules or self.hpy_ext_modules:
                 return True
             return False
@@ -157,6 +166,7 @@ class HPyDevel:
                 write_stub.super(resource, pyfile)
 
     def build_ext_sanity_check(self, build_ext):
+        # type: (setuptools.command.build_ext.build_ext) -> None
         # check that the supplied build_ext inherits from setuptools
         if isinstance(build_ext, type):
             assert ('setuptools.command.build_ext', 'build_ext') in [
@@ -171,6 +181,7 @@ class HPyDevel:
 
 
 def handle_hpy_ext_modules(dist, attr, hpy_ext_modules):
+    # type: (setuptools.Distribution, str, str) -> None
     """ Distuils hpy_ext_module setup(...) argument and --hpy-abi option.
 
         See hpy's setup.py where this function is registered as an entry
@@ -230,15 +241,18 @@ class HPyExtensionName(str):
     """
 
     def split(self, *args, **kw):
+        # type: (*object, **object) -> list[HPyExtensionName]
         result = str.split(self, *args, **kw)
         return [self.__class__(s) for s in result]
 
     def translate(self, *args, **kw):
+        # type: (*object, **object) -> HPyExtensionName
         result = str.translate(self, *args, **kw)
         return self.__class__(result)
 
 
 def is_hpy_extension(ext_name):
+    # type: (str) -> bool
     """ Return True if the extension name is for an HPy extension. """
     return isinstance(ext_name, HPyExtensionName)
 
@@ -269,6 +283,7 @@ def remember_hpy_extension(f):
 # ==================================================
 
 def make_mixin(base, mixin):
+    # type: (type, type) -> type
     """
     Create a new class which inherits from both mixin and base, so that the
     methods of mixin effectively override the ones of base
@@ -434,6 +449,7 @@ class build_ext_hpy_mixin:
                 )
 
     def copy_extensions_to_source(self):
+        # type: () -> None
         """Override from setuptools 64.0.0 to copy our stub instead of recreating it."""
         build_py = self.get_finalized_command('build_py')
         build_lib = build_py.build_lib

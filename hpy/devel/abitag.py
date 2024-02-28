@@ -7,6 +7,7 @@ HPY_ABI_VERSION_MINOR = 0
 HPY_ABI_TAG = 'hpy%d' % HPY_ABI_VERSION
 
 def parse_ext_suffix(ext_suffix=None):
+    # type: (str | None) -> tuple[str, str]
     """
     Parse EXT_SUFFIX and return abi_tag, ext.
 
@@ -48,6 +49,7 @@ def parse_ext_suffix(ext_suffix=None):
 
 
 def get_hpy_ext_suffix(hpy_abi, ext_suffix=None):
+    # type: (str, str | None) -> str
     """
     Return the proper filename extension for the given hpy_abi.
 

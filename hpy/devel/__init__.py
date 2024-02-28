@@ -42,6 +42,9 @@ DEFAULT_HPY_ABI = 'universal'
 if hasattr(sys, 'implementation') and sys.implementation.name == 'cpython':
     DEFAULT_HPY_ABI = 'cpython'
 
+temp_abi = os.environ.get("HPY_BUILD_ABI")
+if temp_abi is not None:
+    DEFAULT_HPY_ABI = temp_abi
 
 class HPyDevel:
     """ Extra sources for building HPy extensions with hpy.devel. """
@@ -343,6 +346,7 @@ class build_ext_hpy_mixin:
         self.hpydevel = self.distribution.hpydevel
 
     def _finalize_hpy_ext(self, ext):
+        # type: (setuptools.Extension) -> None
         if hasattr(ext, "hpy_abi"):
             return
         ext.name = HPyExtensionName(ext.name)
